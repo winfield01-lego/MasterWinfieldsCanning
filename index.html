@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Canned Goods Pantry</title>
+<style>
+:root{--bg:#f5f1e8;--card:#fffdf8;--ink:#243126;--muted:#6d756c;--accent:#4f6f52;--accent2:#dce8d8;--danger:#a63d35;--warn:#9a6b18;--line:#ddd7ca}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:var(--accent);color:white;padding:28px 20px}header .wrap,.wrap{max-width:1200px;margin:auto}
+h1{margin:0 0 5px;font-size:30px}header p{margin:0;opacity:.9}
+nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.nav{max-width:1200px;margin:auto;display:flex;gap:6px;overflow:auto}
+nav button{border:0;background:transparent;padding:15px 16px;color:var(--muted);font-weight:700;cursor:pointer;white-space:nowrap}
+nav button.active{color:var(--accent);border-bottom:3px solid var(--accent)}
+main{max-width:1200px;margin:24px auto;padding:0 16px}.page{display:none}.page.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.card,.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.metric{font-size:28px;font-weight:800;margin-top:5px}.label{color:var(--muted);font-size:13px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.toolbar input,.toolbar select,input,select,textarea{border:1px solid var(--line);border-radius:9px;padding:10px;background:white;color:var(--ink);font:inherit}
+.toolbar input{min-width:240px;flex:1}button.primary{background:var(--accent);color:white;border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer}button.secondary{background:var(--accent2);color:var(--ink);border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden}.table th,.table td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.table th{background:#eee9de;font-size:12px;text-transform:uppercase;letter-spacing:.04em}.flag{display:inline-block;background:#f6d5d2;color:var(--danger);padding:4px 8px;border-radius:999px;font-weight:800;font-size:12px}.ok{display:inline-block;background:#dcebdc;color:#35613a;padding:4px 8px;border-radius:999px;font-weight:700;font-size:12px}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-weight:700;font-size:13px}.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+.empty{padding:30px;text-align:center;color:var(--muted)}.hint{color:var(--muted);font-size:13px;margin-top:7px}
+@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}.form{grid-template-columns:1fr}.field.full{grid-column:auto}}@media(max-width:480px){.cards{grid-template-columns:1fr 1fr}.metric{font-size:23px}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>🥫 Canned Goods Pantry</h1><p>Track what’s canned, what needs to be used, what people want, and your empty jars.</p></div></header>
+<nav><div class="nav">
+<button class="tab active" data-page="dashboard">Dashboard</button><button class="tab" data-page="inventory">Canned Goods</button><button class="tab" data-page="requests">Requests</button><button class="tab" data-page="jars">Empty Jars</button>
+</div></nav>
+<main>
+<section id="dashboard" class="page active">
+<div class="cards">
+<div class="card"><div class="label">Canned units</div><div id="mUnits" class="metric">0</div></div>
+<div class="card"><div class="label">18+ months old</div><div id="mOld" class="metric">0</div></div>
+<div class="card"><div class="label">Open requests</div><div id="mRequests" class="metric">0</div></div>
+<div class="card"><div class="label">Empty jars</div><div id="mJars" class="metric">0</div></div>
+</div>
+<div class="panel"><h2>Getting started</h2><p>Add your pantry inventory under <b>Canned Goods</b>. The app automatically calculates age and flags anything canned 18 months ago or more.</p><p>Use <b>Requests</b> as a simple community request queue, and <b>Empty Jars</b> to keep track of jars, lids, and rings.</p><p class="hint">Data is stored locally in this browser. Use Export/Import to move your data to another device.</p></div>
+</section>
+
+<section id="inventory" class="page">
+<div class="toolbar"><input id="invSearch" placeholder="Search food, method, location…"><select id="invFilter"><option value="all">All ages</option><option value="old">18+ months</option><option value="fresh">Under 18 months</option></select><button class="primary" onclick="openInvForm()">+ Add canned goods</button><button class="secondary" onclick="exportData()">Export</button><label class="secondary" style="cursor:pointer">Import<input id="importFile" type="file" accept=".json" hidden></label></div>
+<div id="invForm" class="panel" style="display:none"><h2>Add canned goods</h2><div class="form">
+<div class="field"><label>Food</label><input id="fFood"></div><div class="field"><label>Jar size</label><select id="fSize"><option>Pint</option><option>Half Pint</option><option>Quart</option><option>Half Gallon</option><option>Other</option></select></div>
+<div class="field"><label>Canning method</label><select id="fMethod"><option>Water Bath</option><option>Pressure Canner</option><option>Steam Canner</option><option>Other</option></select></div><div class="field"><label>Quantity</label><input id="fQty" type="number" min="1" value="1"></div>
+<div class="field"><label>Date canned</label><input id="fDate" type="date"></div><div class="field"><label>Location / shelf</label><input id="fLocation"></div>
+<div class="field full"><label>Notes</label><textarea id="fNotes" rows="2"></textarea></div></div><div class="actions"><button class="secondary" onclick="closeForms()">Cancel</button><button class="primary" onclick="saveInv()">Save</button></div></div>
+<div class="panel table-wrap"><table class="table"><thead><tr><th>Food</th><th>Jar</th><th>Method</th><th>Qty</th><th>Date</th><th>Age</th><th>Status</th><th>Location</th><th></th></tr></thead><tbody id="invBody"></tbody></table></div>
+</section>
+
+<section id="requests" class="page">
+<div class="toolbar"><button class="primary" onclick="openReqForm()">+ Submit request</button><select id="reqFilter"><option value="all">All requests</option><option>New</option><option>In Progress</option><option>Fulfilled</option><option>Declined</option></select></div>
+<div id="reqForm" class="panel" style="display:none"><h2>Submit a request</h2><div class="form">
+<div class="field"><label>Requested food / item</label><input id="rFood"></div><div class="field"><label>Quantity requested</label><input id="rQty" type="number" min="1" value="1"></div>
+<div class="field"><label>Requested by</label><input id="rBy"></div><div class="field"><label>Date</label><input id="rDate" type="date"></div>
+<div class="field full"><label>Notes</label><textarea id="rNotes" rows="2"></textarea></div></div><div class="actions"><button class="secondary" onclick="closeForms()">Cancel</button><button class="primary" onclick="saveReq()">Submit</button></div></div>
+<div class="panel table-wrap"><table class="table"><thead><tr><th>Date</th><th>Request</th><th>Qty</th><th>By</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="reqBody"></tbody></table></div>
+</section>
+
+<section id="jars" class="page">
+<div class="toolbar"><button class="primary" onclick="openJarForm()">+ Add jar inventory</button></div>
+<div id="jarForm" class="panel" style="display:none"><h2>Empty jar inventory</h2><div class="form">
+<div class="field"><label>Jar size</label><select id="jSize"><option>Pint</option><option>Half Pint</option><option>Quart</option><option>Half Gallon</option><option>Other</option></select></div><div class="field"><label>Jar type / brand</label><input id="jType"></div>
+<div class="field"><label>Empty jars on hand</label><input id="jQty" type="number" min="0" value="0"></div><div class="field"><label>Lids on hand</label><input id="jLids" type="number" min="0" value="0"></div>
+<div class="field"><label>Rings on hand</label><input id="jRings" type="number" min="0" value="0"></div><div class="field"><label>Location</label><input id="jLoc"></div>
+<div class="field full"><label>Notes</label><textarea id="jNotes" rows="2"></textarea></div></div><div class="actions"><button class="secondary" onclick="closeForms()">Cancel</button><button class="primary" onclick="saveJar()">Save</button></div></div>
+<div class="panel table-wrap"><table class="table"><thead><tr><th>Size</th><th>Type / brand</th><th>Jars</th><th>Lids</th><th>Rings</th><th>Location</th><th>Notes</th><th></th></tr></thead><tbody id="jarBody"></tbody></table></div>
+</section>
+</main>
+<script>
+const KEY="cannedGoodsPantry.v1";
+let data=JSON.parse(localStorage.getItem(KEY)||'{"inventory":[],"requests":[],"jars":[]}');
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function monthsOld(d){if(!d)return 0;const a=new Date(d+"T00:00:00"),b=new Date();let m=(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth();if(b.getDate()<a.getDate())m--;return Math.max(0,m)}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$(b.dataset.page).classList.add("active")});
+function render(){
+ $("mUnits").textContent=data.inventory.reduce((s,x)=>s+(+x.qty||0),0);
+ $("mOld").textContent=data.inventory.filter(x=>monthsOld(x.date)>=18).length;
+ $("mRequests").textContent=data.requests.filter(x=>x.status==="New"||x.status==="In Progress").length;
+ $("mJars").textContent=data.jars.reduce((s,x)=>s+(+x.qty||0),0);
+ renderInv();renderReq();renderJars();
+}
+function renderInv(){
+ const q=($("invSearch").value||"").toLowerCase(),f=$("invFilter").value;
+ $("invBody").innerHTML=data.inventory.filter(x=>(!q||[x.food,x.method,x.location,x.notes].join(" ").toLowerCase().includes(q))&&(f==="all"||(f==="old"?monthsOld(x.date)>=18:monthsOld(x.date)<18))).map((x,i)=>{const age=monthsOld(x.date), old=age>=18;return `<tr><td><b>${esc(x.food)}</b></td><td>${esc(x.size)}</td><td>${esc(x.method)}</td><td>${x.qty}</td><td>${esc(x.date)}</td><td>${age} mo</td><td><span class="${old?'flag':'ok'}">${old?'FLAG':'OK'}</span></td><td>${esc(x.location)}</td><td><button onclick="del('inventory',${i})">Delete</button></td></tr>`}).join("")||`<tr><td colspan="9" class="empty">No canned goods yet.</td></tr>`;
+}
+function renderReq(){
+ const f=$("reqFilter").value;
+ $("reqBody").innerHTML=data.requests.filter(x=>f==="all"||x.status===f).map((x,i)=>`<tr><td>${esc(x.date)}</td><td><b>${esc(x.food)}</b></td><td>${x.qty}</td><td>${esc(x.by)}</td><td><select onchange="setStatus(${i},this.value)">${["New","In Progress","Fulfilled","Declined"].map(s=>`<option ${x.status===s?"selected":""}>${s}</option>`).join("")}</select></td><td>${esc(x.notes)}</td><td><button onclick="del('requests',${i})">Delete</button></td></tr>`).join("")||`<tr><td colspan="7" class="empty">No requests yet.</td></tr>`;
+}
+function renderJars(){
+ $("jarBody").innerHTML=data.jars.map((x,i)=>`<tr><td>${esc(x.size)}</td><td>${esc(x.type)}</td><td>${x.qty}</td><td>${x.lids}</td><td>${x.rings}</td><td>${esc(x.loc)}</td><td>${esc(x.notes)}</td><td><button onclick="del('jars',${i})">Delete</button></td></tr>`).join("")||`<tr><td colspan="8" class="empty">No jar inventory yet.</td></tr>`;
+}
+function openInvForm(){$("invForm").style.display="block";$("fDate").value=new Date().toISOString().slice(0,10)}
+function openReqForm(){$("reqForm").style.display="block";$("rDate").value=new Date().toISOString().slice(0,10)}
+function openJarForm(){$("jarForm").style.display="block"}
+function closeForms(){["invForm","reqForm","jarForm"].forEach(x=>$(x).style.display="none")}
+function saveInv(){if(!$("fFood").value.trim())return alert("Please enter a food.");data.inventory.push({food:$("fFood").value.trim(),size:$("fSize").value,method:$("fMethod").value,qty:+$("fQty").value||0,date:$("fDate").value,location:$("fLocation").value,notes:$("fNotes").value});closeForms();save();["fFood","fLocation","fNotes"].forEach(x=>$(x).value="")}
+function saveReq(){if(!$("rFood").value.trim())return alert("Please enter a requested item.");data.requests.push({food:$("rFood").value.trim(),qty:+$("rQty").value||0,by:$("rBy").value,date:$("rDate").value,status:"New",notes:$("rNotes").value});closeForms();save();["rFood","rBy","rNotes"].forEach(x=>$(x).value="")}
+function saveJar(){data.jars.push({size:$("jSize").value,type:$("jType").value,qty:+$("jQty").value||0,lids:+$("jLids").value||0,rings:+$("jRings").value||0,loc:$("jLoc").value,notes:$("jNotes").value});closeForms();save();["jType","jLoc","jNotes"].forEach(x=>$(x).value="")}
+function del(type,i){if(confirm("Delete this entry?")){data[type].splice(i,1);save()}}
+function setStatus(i,v){data.requests[i].status=v;save()}
+function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="canned-goods-backup.json";a.click();URL.revokeObjectURL(a.href)}
+$("importFile").onchange=e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{data=JSON.parse(r.result);save();alert("Import complete.")}catch{alert("That file is not a valid backup.")}};r.readAsText(file)}
+$("invSearch").oninput=renderInv;$("invFilter").onchange=renderInv;$("reqFilter").onchange=renderReq;
+render();
+</script>
+</body></html>
