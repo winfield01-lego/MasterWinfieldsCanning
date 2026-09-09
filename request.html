@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Request canned goods — Shelf & Seal</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="9" y="5" width="16" height="5" rx="1.5" fill="#F1EDE2" opacity="0.85"/>
+      <path d="M10 10h14l1.3 16.5A2.5 2.5 0 0 1 22.8 29H11.2a2.5 2.5 0 0 1-2.5-2.5L10 10Z" stroke="#F1EDE2" stroke-width="1.8"/>
+    </svg>
+    <div>
+      <h1>Shelf &amp; Seal</h1>
+      <span>Request canned goods</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <h2>What's in the pantry</h2>
+    <p>Here's what's currently canned and ready to give away. If you don't see what you're after, use the form to suggest something for next season.</p>
+  </div>
+
+  <div id="availability-grid" class="availability-grid">
+    <div class="empty-state">Loading current inventory…</div>
+  </div>
+
+  <form id="request-form" class="request-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+    <fieldset>
+      <legend>What is this?</legend>
+      <div class="radio-row">
+        <label><input type="radio" name="request-type" value="Request from stock" checked> Request something I have on hand</label>
+        <label><input type="radio" name="request-type" value="Future canning suggestion"> Suggest something for me to can</label>
+      </div>
+    </fieldset>
+
+    <div class="field" id="item-field">
+      <label for="f-item">Item</label>
+      <select id="f-item" name="Item requested"></select>
+    </div>
+
+    <div class="field" id="suggestion-field" style="display:none;">
+      <label for="f-suggestion">What should I can?</label>
+      <input id="f-suggestion" name="Canning suggestion" type="text" placeholder="e.g. peach jam">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="f-name">Your name</label>
+        <input id="f-name" name="Name" type="text" required>
+      </div>
+      <div class="field">
+        <label for="f-email">Your email</label>
+        <input id="f-email" name="Email" type="email" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="f-qty">Quantity requested</label>
+      <input id="f-qty" name="Quantity" type="number" min="1" value="1">
+    </div>
+
+    <div class="field">
+      <label for="f-notes">Notes</label>
+      <textarea id="f-notes" name="Notes" placeholder="Anything else I should know?"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Send request</button>
+  </form>
+</main>
+
+<footer class="site-footer">Requests are emailed straight to the pantry keeper. Thanks for asking first!</footer>
+
+<script src="assets/request.js"></script>
+</body>
+</html>

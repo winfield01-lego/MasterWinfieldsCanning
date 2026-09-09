@@ -1,0 +1,26 @@
+{
+  "jars": [
+    {
+      "id": "sample-1",
+      "quantity": 6,
+      "size": "Pint (16 oz)",
+      "mouthType": "Regular Mouth",
+      "status": "Full",
+      "contents": "Dill Pickles",
+      "canningDate": "2025-07-14",
+      "storageLocation": "Basement Shelf A",
+      "notes": ""
+    },
+    {
+      "id": "sample-2",
+      "quantity": 24,
+      "size": "Quart (32 oz)",
+      "mouthType": "Wide Mouth",
+      "status": "Empty",
+      "contents": "",
+      "canningDate": "",
+      "storageLocation": "Garage Shelf 2",
+      "notes": "Ready for tomato sauce this fall"
+    }
+  ]
+}
